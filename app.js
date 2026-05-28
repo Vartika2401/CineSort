@@ -1128,7 +1128,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Quick Play Auto-Generator ---
-  const quickPlayType = document.getElementById('quick-play-type');
   const quickPlaySearch = document.getElementById('quick-play-search');
   const quickPlayBtn = document.getElementById('quick-play-btn');
   const quickPlayStatus = document.getElementById('quick-play-status');
@@ -1136,7 +1135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   quickPlayBtn.addEventListener('click', async () => {
     const query = quickPlaySearch.value.trim();
     if (!query) {
-      alert("Please enter a TV show or movie franchise search term.");
+      alert("Please enter a TV show or Anime search term.");
       quickPlaySearch.focus();
       return;
     }
@@ -1151,107 +1150,42 @@ document.addEventListener('DOMContentLoaded', () => {
       let franchiseName = "";
       let color = "#1d4ed8"; // default NYPD-like blue for quickplays
 
-      if (quickPlayType.value === 'tv') {
-        const url = `https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(query)}&embed=episodes`;
-        const res = await fetch(url);
-        if (res.status === 404) {
-          throw new Error("TV show not found. Please try another search (e.g. 'Breaking Bad').");
-        }
-        if (!res.ok) throw new Error("Error connecting to TV database.");
-        
-        const data = await res.json();
-        const episodes = (data._embedded && data._embedded.episodes) ? data._embedded.episodes.filter(ep => ep.airdate) : [];
-        if (episodes.length === 0) throw new Error("This show has no episodes available.");
-
-        franchiseName = data.name;
-        // Sample random 30 episodes
-        const sampled = getRandomSample(episodes, 30);
-        events = sampled.map(ep => {
-          const dateObj = new Date(ep.airdate);
-          const year = ep.airdate && !isNaN(dateObj.getTime())
-            ? dateObj.getFullYear() + (dateObj.getMonth() / 12) + (dateObj.getDate() / 365)
-            : 2000;
-          const displayDate = ep.airdate && !isNaN(dateObj.getTime())
-            ? dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-            : ep.airdate;
-          
-          let desc = ep.summary ? ep.summary.replace(/<[^>]*>/g, '').trim() : '';
-          if (desc.length > 180) desc = desc.substring(0, 177) + "...";
-
-          return {
-            id: `magic-quick-${ep.id}-${Date.now()}`,
-            title: ep.name,
-            description: desc,
-            inUniverseYear: year,
-            inUniverseDisplay: `${displayDate} (S${ep.season}E${ep.number})`,
-            releaseYear: year,
-            releaseDisplay: `${displayDate} (S${ep.season}E${ep.number})`
-          };
-        });
-      } else {
-        // Movie franchise
-        const apiKey = localStorage.getItem('cinesort_tmdb_key');
-        if (!apiKey) {
-          throw new Error("TMDb API Key not found. Please open 'Custom Timeline Creator', select the Movie Franchise tab, and paste your API key there first.");
-        }
-
-        const searchUrl = `https://api.themoviedb.org/3/search/collection?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=en-US`;
-        const searchRes = await fetch(searchUrl);
-        if (!searchRes.ok) {
-          if (searchRes.status === 401) throw new Error("Invalid TMDb API Key. Please verify it in the custom creator panel.");
-          throw new Error("Error connecting to TMDb.");
-        }
-        const searchData = await searchRes.json();
-        let movies = [];
-
-        if (searchData.results && searchData.results.length > 0) {
-          const collectionId = searchData.results[0].id;
-          franchiseName = searchData.results[0].name;
-          const detailUrl = `https://api.themoviedb.org/3/collection/${collectionId}?api_key=${apiKey}&language=en-US`;
-          const detailRes = await fetch(detailUrl);
-          if (detailRes.ok) {
-            const detailData = await detailRes.json();
-            movies = detailData.parts || [];
-          }
-        }
-
-        if (movies.length === 0) {
-          const movieUrl = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(query)}&language=en-US`;
-          const movieRes = await fetch(movieUrl);
-          if (!movieRes.ok) throw new Error("Error searching TMDb movies.");
-          const movieData = await movieRes.json();
-          movies = movieData.results || [];
-          franchiseName = query;
-        }
-
-        movies = movies.filter(m => m.release_date);
-        if (movies.length === 0) throw new Error("No movies found for this franchise.");
-
-        // Sample up to 30 movies
-        const sampled = movies.slice(0, 30);
-        events = sampled.map(m => {
-          const dateObj = new Date(m.release_date);
-          const year = m.release_date && !isNaN(dateObj.getTime())
-            ? dateObj.getFullYear() + (dateObj.getMonth() / 12) + (dateObj.getDate() / 365)
-            : 2000;
-          const displayDate = m.release_date && !isNaN(dateObj.getTime())
-            ? dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-            : m.release_date;
-
-          let desc = m.overview || 'No overview available.';
-          if (desc.length > 180) desc = desc.substring(0, 177) + "...";
-
-          return {
-            id: `magic-quick-${m.id}-${Date.now()}`,
-            title: m.title,
-            description: desc,
-            inUniverseYear: year,
-            inUniverseDisplay: `${displayDate} (${m.title})`,
-            releaseYear: year,
-            releaseDisplay: `${displayDate} (${m.title})`
-          };
-        });
+      const url = `https://api.tvmaze.com/singlesearch/shows?q=${encodeURIComponent(query)}&embed=episodes`;
+      const res = await fetch(url);
+      if (res.status === 404) {
+        throw new Error("Show or Anime not found. Please try another search (e.g. 'Attack on Titan').");
       }
+      if (!res.ok) throw new Error("Error connecting to database.");
+      
+      const data = await res.json();
+      const episodes = (data._embedded && data._embedded.episodes) ? data._embedded.episodes.filter(ep => ep.airdate) : [];
+      if (episodes.length === 0) throw new Error("This show has no episodes available.");
+
+      franchiseName = data.name;
+      // Sample random 30 episodes
+      const sampled = getRandomSample(episodes, 30);
+      events = sampled.map(ep => {
+        const dateObj = new Date(ep.airdate);
+        const year = ep.airdate && !isNaN(dateObj.getTime())
+          ? dateObj.getFullYear() + (dateObj.getMonth() / 12) + (dateObj.getDate() / 365)
+          : 2000;
+        const displayDate = ep.airdate && !isNaN(dateObj.getTime())
+          ? dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+          : ep.airdate;
+        
+        let desc = ep.summary ? ep.summary.replace(/<[^>]*>/g, '').trim() : '';
+        if (desc.length > 180) desc = desc.substring(0, 177) + "...";
+
+        return {
+          id: `magic-quick-${ep.id}-${Date.now()}`,
+          title: ep.name,
+          description: desc,
+          inUniverseYear: year,
+          inUniverseDisplay: `${displayDate} (S${ep.season}E${ep.number})`,
+          releaseYear: year,
+          releaseDisplay: `${displayDate} (S${ep.season}E${ep.number})`
+        };
+      });
 
       // Construct temporary deck
       const generatedFranchise = {
