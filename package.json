@@ -1,0 +1,22 @@
+{
+  "name": "cinesort",
+  "version": "1.0.0",
+  "description": "CineSort is a Wikitrivia-style web game where players sort iconic events from famous movie series in chronological order.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "http-server -p 8000 -c-1",
+    "start": "http-server -p 8000 -c-1"
+  },
+  "keywords": [
+    "cinesort",
+    "movie",
+    "timeline",
+    "game",
+    "trivia"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
