@@ -426,28 +426,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const slotEl = document.createElement('div');
       slotEl.className = 'timeline-slot';
 
-<<<<<<< HEAD
-      const cardEl = document.createElement('div');
-      cardEl.className = `card timeline-card${card.isMistake ? ' mistake-card' : ''}`;
-      cardEl.innerHTML = `
-        <div>
-          <div class="card-title">${card.title}</div>
-          <div class="card-desc">${card.description}</div>
-        </div>
-        <div class="card-footer">
-          <div class="card-date">${card.displayYear}</div>
-          <div class="card-type-tag">${card.isMistake ? 'Mistake' : 'Timeline'}</div>
-        </div>
-      `;
-=======
       // Render all cards inside this slot (stacked vertically)
       slot.cards.forEach(card => {
         const cardWrapper = document.createElement('div');
         cardWrapper.className = 'timeline-card-wrapper';
->>>>>>> 8fe6eb2565decc53189a43bb4fbb5529b6c2aa9b
 
         const cardEl = document.createElement('div');
-        cardEl.className = 'card timeline-card';
+        cardEl.className = `card timeline-card${card.isMistake ? ' mistake-card' : ''}`;
         
         // Add custom flow color class for TENET
         if (activeFranchiseId === 'tenet' && card.flow) {
@@ -461,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <div class="card-footer">
             <div class="card-date">${card.displayYear}</div>
-            <div class="card-type-tag">${card.flow ? card.flow.toUpperCase() : 'Timeline'}</div>
+            <div class="card-type-tag">${card.isMistake ? 'Mistake' : (card.flow ? card.flow.toUpperCase() : 'Timeline')}</div>
           </div>
         `;
 
