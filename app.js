@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let deck = [];
   let placedCards = [];
   let drawnCard = null;
+  let drawnCards = []; // supports multiple cards (e.g. for TENET God Tier mode)
   let customDecks = {};
 
   // --- Load Custom Decks ---
@@ -135,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('game-back-btn').addEventListener('click', () => {
     showScreen('landing');
     document.body.className = 'theme-mcu'; // reset background theme
+    document.getElementById('inspect-bar').classList.add('hidden');
   });
 
   // Back from Builder Screen
@@ -149,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     grid.innerHTML = '';
 
     // Built-in categories
-    const movieKeys = ['mcu', 'starwars', 'harrypotter', 'lotr'];
+    const movieKeys = ['mcu', 'starwars', 'harrypotter', 'lotr', 'tenet'];
     const tvKeys = ['got', 'vampirediaries', 'friends', 'b99'];
     const activeKeys = activeTab === 'movie' ? movieKeys : tvKeys;
 
@@ -244,14 +246,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Game Engine Logic ---
   function initGame(franchiseId, isCustom) {
     activeFranchiseId = franchiseId;
+    document.getElementById('inspect-bar').classList.add('hidden');
     activeFranchise = isCustom ? customDecks[franchiseId] : TIMELINE_DATA[franchiseId];
     
     // Set Visual Theme Class on body
     document.body.className = `theme-${isCustom ? 'custom' : franchiseId}`;
     
+    // For TENET, force in-universe calendar mode since release date does not apply to a single movie
+    let activeTimelineMode = timelineMode;
+    if (franchiseId === 'tenet') {
+      activeTimelineMode = 'in-universe';
+    }
+    
     // Update Header Labels
     activeFranchiseName.textContent = activeFranchise.name;
-    activeModeLabel.textContent = timelineMode === 'in-universe' ? 'In-Universe Chronological Timeline' : 'Real-World Release Date Timeline';
+    activeModeLabel.textContent = activeTimelineMode === 'in-universe' 
+      ? (franchiseId === 'tenet' ? 'GOD Tier Chronological Timeline' : 'In-Universe Chronological Timeline')
+      : 'Real-World Release Date Timeline';
 
     // Clear stats
     score = 0;
@@ -267,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         description: event.description
       };
 
-      if (timelineMode === 'in-universe') {
+      if (activeTimelineMode === 'in-universe') {
         mapped.year = event.inUniverseYear;
         mapped.displayYear = event.inUniverseDisplay;
       } else {
@@ -289,6 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial board setup
     placedCards = [deck.pop()]; // Take first card as start anchor
     
+    drawnCard = null;
+    drawnCards = [];
+    
     showScreen('game');
     
     // Draw first active mystery card
@@ -305,12 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawNextCard() {
     if (deck.length === 0) {
-      // Out of cards: Reshuffle remaining? Or trigger Victory!
       triggerVictory();
       return;
     }
 
     drawnCard = deck.pop();
+    drawnCards = [drawnCard];
 
     // Clear and render active drawer card
     drawerCardContainer.innerHTML = '';
@@ -318,15 +332,21 @@ document.addEventListener('DOMContentLoaded', () => {
     cardEl.className = 'card';
     cardEl.draggable = true;
     cardEl.id = 'mystery-card';
+    cardEl.dataset.id = drawnCard.id;
+    
+    // Add custom flow color class for TENET
+    if (activeFranchiseId === 'tenet' && drawnCard.flow) {
+      cardEl.classList.add(`flow-${drawnCard.flow}`);
+    }
     
     cardEl.innerHTML = `
-      <div>
+      <div class="card-header-content">
         <div class="card-title">${drawnCard.title}</div>
         <div class="card-desc">${drawnCard.description}</div>
       </div>
       <div class="card-footer">
         <div class="card-date" style="color: var(--text-secondary)">?</div>
-        <div class="card-type-tag">Place Me</div>
+        <div class="card-type-tag">${drawnCard.flow ? drawnCard.flow.toUpperCase() : 'Place Me'}</div>
       </div>
     `;
 
@@ -371,32 +391,114 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderTimeline() {
     timelineContainer.innerHTML = '';
 
+    // Group placed cards by year (simultaneous events)
+    const slots = [];
+    placedCards.forEach(card => {
+      const existingSlot = (activeFranchiseId === 'tenet') 
+        ? slots.find(s => s.year === card.year) 
+        : null;
+        
+      if (existingSlot) {
+        existingSlot.cards.push(card);
+      } else {
+        slots.push({
+          year: card.year,
+          cards: [card]
+        });
+      }
+    });
+
+    // Set dynamic body class based on whether any stacked simultaneous events exist
+    const hasStacks = slots.some(slot => slot.cards.length > 1);
+    if (activeFranchiseId === 'tenet' && hasStacks) {
+      document.body.classList.add('timeline-has-stacks');
+    } else {
+      document.body.classList.remove('timeline-has-stacks');
+    }
+
+    let flatIndex = 0;
+
     // Render first drop zone (index 0)
     timelineContainer.appendChild(createDropZone(0));
 
-    // Render cards and subsequent drop zones
-    placedCards.forEach((card, index) => {
-      const cardWrapper = document.createElement('div');
-      cardWrapper.className = 'timeline-card-wrapper';
+    // Render slots (which contain stacked cards) and subsequent drop zones
+    slots.forEach((slot) => {
+      const slotEl = document.createElement('div');
+      slotEl.className = 'timeline-slot';
 
-      const cardEl = document.createElement('div');
-      cardEl.className = 'card timeline-card';
-      cardEl.innerHTML = `
-        <div>
-          <div class="card-title">${card.title}</div>
-          <div class="card-desc">${card.description}</div>
-        </div>
-        <div class="card-footer">
-          <div class="card-date">${card.displayYear}</div>
-          <div class="card-type-tag">Timeline</div>
-        </div>
-      `;
+      // Render all cards inside this slot (stacked vertically)
+      slot.cards.forEach(card => {
+        const cardWrapper = document.createElement('div');
+        cardWrapper.className = 'timeline-card-wrapper';
 
-      cardWrapper.appendChild(cardEl);
-      timelineContainer.appendChild(cardWrapper);
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card timeline-card';
+        
+        // Add custom flow color class for TENET
+        if (activeFranchiseId === 'tenet' && card.flow) {
+          cardEl.classList.add(`flow-${card.flow}`);
+        }
 
-      // Render subsequent drop zone (index + 1)
-      timelineContainer.appendChild(createDropZone(index + 1));
+        cardEl.innerHTML = `
+          <div class="card-header-content">
+            <div class="card-title">${card.title}</div>
+            <div class="card-desc">${card.description}</div>
+          </div>
+          <div class="card-footer">
+            <div class="card-date">${card.displayYear}</div>
+            <div class="card-type-tag">${card.flow ? card.flow.toUpperCase() : 'Timeline'}</div>
+          </div>
+        `;
+
+        cardWrapper.appendChild(cardEl);
+        slotEl.appendChild(cardWrapper);
+      });
+
+      // Render a vertical drop zone at the top of the stack if the drawn card has the SAME year
+      // (This prompts the player to drop/add the card directly above the existing simultaneous events!)
+      if (activeFranchiseId === 'tenet' && drawnCard && drawnCard.year === slot.year && !slot.cards.some(c => c.id === drawnCard.id)) {
+        const verticalZone = document.createElement('div');
+        verticalZone.className = 'vertical-drop-zone';
+
+        verticalZone.innerHTML = `
+          <button class="vertical-drop-btn" aria-label="Add simultaneous event here">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <div style="font-size: 0.65rem; color: var(--primary-color); font-weight: 700;">CONVERGE</div>
+        `;
+
+        // Drag-and-drop events on the vertical drop zone
+        verticalZone.addEventListener('dragover', handleDragOver);
+        verticalZone.addEventListener('dragleave', handleDragLeave);
+        
+        const targetFlatIndex = flatIndex; // capture current flatIndex
+        
+        verticalZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const data = e.dataTransfer.getData('text/plain');
+          if (data === 'drawn-card') {
+            verifyPlacement(targetFlatIndex);
+          }
+        });
+
+        // Click / tap click placement
+        verticalZone.querySelector('.vertical-drop-btn').addEventListener('click', () => {
+          verifyPlacement(targetFlatIndex);
+        });
+
+        slotEl.appendChild(verticalZone);
+      }
+
+      timelineContainer.appendChild(slotEl);
+
+      // Increment running flatIndex by the number of cards in this slot
+      flatIndex += slot.cards.length;
+
+      // Render subsequent drop zone (index flatIndex)
+      timelineContainer.appendChild(createDropZone(flatIndex));
     });
   }
 
@@ -430,6 +532,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Drag and Drop Handlers ---
   function handleDragStart(e) {
+    const cardId = this.dataset.id;
+    if (activeFranchiseId === 'tenet') {
+      const found = drawnCards.find(c => c.id === cardId);
+      if (found) {
+        drawnCard = found;
+      }
+    }
     document.body.classList.add('dragging-active');
     setTimeout(() => {
       this.classList.add('dragging');
@@ -499,6 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Re-render, draw next card, and auto scroll to new card
       const newCardId = drawnCard.id;
+      drawnCards = drawnCards.filter(c => c.id !== newCardId);
       drawnCard = null;
       updateStatsDisplay();
       renderTimeline();
@@ -529,6 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Place the card in its CORRECT location to keep board sorted
       const failedCard = drawnCard;
       placedCards.splice(correctIndex, 0, failedCard);
+      drawnCards = drawnCards.filter(c => c.id !== failedCard.id);
       drawnCard = null;
 
       // Update stats based on new placed cards count
@@ -540,10 +651,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Highlight the wrong placement & auto-scroll
       setTimeout(() => {
-        highlightInsertedCard(failedCard.id, 'shake');
+        highlightInsertedCard(failedCard.id, 'incorrect-flash');
         // Check game over
         if (lives <= 0) {
-          triggerGameOver();
+          setTimeout(() => {
+            triggerGameOver();
+          }, 2200); // 2.2s delay to let the player see where the final card correctly fits on the timeline
         } else {
           drawNextCard();
         }
@@ -595,6 +708,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('retry-game-btn').addEventListener('click', () => {
     gameOverModal.classList.add('hidden');
     initGame(activeFranchiseId, activeFranchiseId.startsWith('custom_'));
+  });
+
+  document.getElementById('inspect-timeline-btn').addEventListener('click', () => {
+    gameOverModal.classList.add('hidden');
+    document.getElementById('inspect-bar').classList.remove('hidden');
+    SoundManager.playClick();
+  });
+
+  document.getElementById('restore-modal-btn').addEventListener('click', () => {
+    document.getElementById('inspect-bar').classList.add('hidden');
+    gameOverModal.classList.remove('hidden');
+    SoundManager.playClick();
   });
 
   document.getElementById('quit-game-btn').addEventListener('click', () => {

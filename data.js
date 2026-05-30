@@ -1160,6 +1160,185 @@ const TIMELINE_DATA = {
       }
     ]
   },
+  tenet: {
+    name: "TENET (GOD Tier)",
+    color: "#00ffff",
+    gradient: "linear-gradient(135deg, #020205 0%, #001220 50%, #00ffff 100%)",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M7 7l-5 5 5 5M17 7l5 5-5 5"/></svg>`,
+    lifeIcon: `<svg viewBox="0 0 24 24" class="life-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6V2M12 22v-4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M2 12h4M18 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>`,
+    events: [
+      {
+        id: "tenet-sator-ruins",
+        title: "Sator Finds Future Gold",
+        description: "A young Andrei Sator discovers future gold and instructions in the ruins of Stalsk-12, launching his rise to power.",
+        inUniverseYear: 1990,
+        inUniverseDisplay: "Sator's Early Years",
+        releaseYear: 2020.1,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-neil-recruitment",
+        title: "Neil's Recruitment by the Protagonist",
+        description: "A future version of the Protagonist travels into the past to recruit and train a young Neil, establishing their deep friendship.",
+        inUniverseYear: 2010,
+        inUniverseDisplay: "Neil's Training",
+        releaseYear: 2020.2,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-kyiv-opera",
+        title: "The Kyiv Opera House Siege",
+        description: "The Protagonist infiltrates the Kyiv Opera House. Neil saves him with a mysterious inverted bullet that travels backward in time.",
+        inUniverseYear: 2020.3,
+        inUniverseDisplay: "Kyiv Opera House",
+        flow: "blue",
+        releaseYear: 2020.3,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-stalsk-battle",
+        title: "The Battle of Stalsk-12",
+        description: "The Protagonist secures the Algorithm in Russia while Neil dies at the bunker gate to save him.",
+        inUniverseYear: 2020.3,
+        inUniverseDisplay: "Stalsk-12 Battle",
+        flow: "red",
+        releaseYear: 2020.35,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-vietnam-yacht",
+        title: "Vietnam Yacht Assassination",
+        description: "Cat assassinates Andrei Sator on his yacht in Vietnam to prevent him from triggering the end of the world.",
+        inUniverseYear: 2020.3,
+        inUniverseDisplay: "Vietnam Yacht",
+        flow: "red",
+        releaseYear: 2020.4,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-ship-wake",
+        title: "Waking Up on the Ship",
+        description: "Having survived a fake suicide pill, the Protagonist wakes up on a wind turbine ship and is introduced to the word 'Tenet'.",
+        inUniverseYear: 2020.41,
+        inUniverseDisplay: "Wind Turbine Vessel",
+        releaseYear: 2020.42,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-inversion-discovery",
+        title: "Discovery of Inversion",
+        description: "The Protagonist visits the scientist Barbara, who shows him inverted bullet casings that 'catch' bullets instead of firing them.",
+        inUniverseYear: 2020.43,
+        inUniverseDisplay: "Inversion Laboratory",
+        releaseYear: 2020.44,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-mumbai-bungee",
+        title: "The Mumbai Bungee Interrogation",
+        description: "The Protagonist and Neil bungee-jump off a skyscraper in Mumbai to interrogate the arms dealer Priya.",
+        inUniverseYear: 2020.51,
+        inUniverseDisplay: "Mumbai Interrogation",
+        releaseYear: 2020.46,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-crosby-meeting",
+        title: "Meeting Sir Michael Crosby",
+        description: "The Protagonist meets a British intelligence agent in London to get advice on Sator's background and a forged Goya drawing.",
+        inUniverseYear: 2020.52,
+        inUniverseDisplay: "London Intelligence Briefing",
+        releaseYear: 2020.48,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-kitchen-fight",
+        title: "The London Kitchen Fight",
+        description: "The Protagonist fights off Sator's henchmen in a restaurant kitchen to protect himself and get Sator's attention.",
+        inUniverseYear: 2020.53,
+        inUniverseDisplay: "Shipyard Kitchen Fight",
+        releaseYear: 2020.49,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-container-voyage",
+        title: "The Container Voyage",
+        description: "Isolated inside a secure shipping container on a cargo ship, the Protagonist, Neil, and Cat move backward through time while breathing inverted oxygen to heal her wound.",
+        inUniverseYear: 2020.54,
+        inUniverseDisplay: "Container Voyage",
+        releaseYear: 2020.5,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-oslo-heist",
+        title: "Oslo Airport Heist",
+        description: "The Protagonist and Neil crash a Boeing 747 into the Oslo Freeport vault to destroy Sator's Goya painting.",
+        inUniverseYear: 2020.6,
+        inUniverseDisplay: "Oslo Airport Vault",
+        flow: "blue",
+        releaseYear: 2020.55,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-oslo-clash",
+        title: "Oslo Turnstile Fight",
+        description: "Inside the Turnstile room, the Protagonist unwittingly fights a future, backward-moving version of himself.",
+        inUniverseYear: 2020.6,
+        inUniverseDisplay: "Oslo Turnstile Chamber",
+        flow: "red",
+        releaseYear: 2020.6,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-tallinn-robbery",
+        title: "Tallinn Highway Robbery",
+        description: "The Protagonist and Neil perform an elaborate highway heist in Tallinn to steal the mysterious plutonium artifact.",
+        inUniverseYear: 2020.7,
+        inUniverseDisplay: "Tallinn Plutonium Heist",
+        flow: "blue",
+        releaseYear: 2020.65,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-tallinn-saab",
+        title: "The Saab Highway Chase",
+        description: "On the Tallinn highway, a Saab driven by a backward-moving version of the Protagonist is flipped and set on fire by Sator.",
+        inUniverseYear: 2020.7,
+        inUniverseDisplay: "Tallinn Saab Flip",
+        flow: "red",
+        releaseYear: 2020.7,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-tallinn-inversion",
+        title: "Tallinn Turnstile Inversion",
+        description: "After Sator shoots Cat, she is taken into the Tallinn Turnstile to invert her flow, allowing her wound to heal as she moves backward in time.",
+        inUniverseYear: 2020.7,
+        inUniverseDisplay: "Tallinn Turnstile Chamber",
+        flow: "blue",
+        releaseYear: 2020.75,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-london-cleanup",
+        title: "The London Clean-up",
+        description: "The Protagonist assassinates Priya in London to protect Cat and close the temporal loop.",
+        inUniverseYear: 2020.8,
+        inUniverseDisplay: "London Aftermath",
+        releaseYear: 2020.8,
+        releaseDisplay: "August 2020"
+      },
+      {
+        id: "tenet-origin-future",
+        title: "The Deep Future Origin",
+        description: "The Protagonist establishes the entire Tenet organization, sending instructions and inverted materials back through time to orchestrate the global mission.",
+        inUniverseYear: 2050,
+        inUniverseDisplay: "Deep Future",
+        releaseYear: 2020.9,
+        releaseDisplay: "August 2020"
+      }
+    ]
+  },
   got: {
     name: "Game of Thrones",
     color: "#6c757d",

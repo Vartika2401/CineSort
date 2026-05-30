@@ -533,15 +533,40 @@ button {
   margin-bottom: 0.5rem;
 }
 
+.card-header-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .card-desc {
   font-size: 0.85rem;
   color: var(--text-secondary);
   line-height: 1.45;
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+/* Custom card description scrollbar */
+.card-desc::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-desc::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-desc::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+.card-desc::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
 }
 
 .card-footer {
@@ -644,7 +669,8 @@ button {
 }
 
 .timeline-card .card-desc {
-  -webkit-line-clamp: 3;
+  display: block;
+  -webkit-line-clamp: unset;
 }
 
 /* Insertion points / Drop zones */
@@ -737,6 +763,18 @@ body.dragging-active .drop-btn {
   0% { box-shadow: 0 0 0 0px rgba(46, 196, 182, 0.8); border-color: #2ec4b6; }
   100% { box-shadow: 0 0 0 25px rgba(46, 196, 182, 0); border-color: var(--card-border); }
 }
+
+.incorrect-flash {
+  animation: shake-error 0.5s ease-in-out, incorrect-glow 1.5s ease-out;
+  border-color: #e63946 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(230, 57, 70, 0.6) !important;
+}
+
+@keyframes incorrect-glow {
+  0% { box-shadow: 0 0 0 0px rgba(230, 57, 70, 0.8), 0 0 0px rgba(230, 57, 70, 0.6); }
+  100% { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 15px rgba(230, 57, 70, 0.6); }
+}
+
 
 /* Custom Game Builder Screen */
 .builder-content {
@@ -1059,6 +1097,22 @@ body.theme-b99 {
   --bg-gradient: linear-gradient(135deg, #050b14 0%, #0d1e36 100%);
 }
 
+body.theme-tenet {
+  --primary-color: #00ffff; /* Neon Cyan */
+  --accent-color: #005f73;  /* Deep Teal */
+  --card-glow: rgba(0, 255, 255, 0.18);
+  --bg-gradient: linear-gradient(135deg, #020205 0%, #000c18 100%);
+}
+
+#drawer-card-container {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
 /* Confetti particles */
 .confetti {
   position: fixed;
@@ -1161,7 +1215,6 @@ body.theme-b99 {
   }
   .card-desc {
     font-size: 0.8rem;
-    -webkit-line-clamp: 3;
   }
   .timeline-card {
     width: 200px;
@@ -1173,7 +1226,6 @@ body.theme-b99 {
   }
   .timeline-card .card-desc {
     font-size: 0.75rem;
-    -webkit-line-clamp: 2;
   }
   .drop-zone {
     width: 50px;
@@ -1191,3 +1243,188 @@ body.theme-b99 {
     padding: 0 2rem;
   }
 }
+
+/* Floating Inspection Bar */
+.inspect-bar {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 40px;
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(230, 57, 70, 0.25);
+  z-index: 95; /* above everything but below the actual game-over-modal when open */
+  animation: slide-up-bar 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@keyframes slide-up-bar {
+  from { transform: translate(-50%, 100px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.inspect-bar span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  font-family: var(--font-heading);
+}
+
+.inspect-bar button {
+  padding: 0.6rem 1.4rem;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  background: var(--primary-color);
+  font-weight: 600;
+  box-shadow: 0 4px 15px var(--card-glow);
+}
+
+/* Custom Red/Blue card glows for TENET Inversion Flows */
+.card.flow-red {
+  border-color: rgba(230, 57, 70, 0.5) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(230, 57, 70, 0.3) !important;
+}
+.card.flow-red::before {
+  background: #e63946 !important; /* Crimson Red */
+}
+.card.flow-red .card-type-tag {
+  color: #e63946 !important;
+  background: rgba(230, 57, 70, 0.12) !important;
+}
+
+.card.flow-blue {
+  border-color: rgba(0, 255, 255, 0.5) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(0, 255, 255, 0.3) !important;
+}
+.card.flow-blue::before {
+  background: #00ffff !important; /* Neon Cyan */
+}
+.card.flow-blue .card-type-tag {
+  color: #00ffff !important;
+  background: rgba(0, 255, 255, 0.12) !important;
+}
+
+/* Specific timeline height extension for TENET simultaneous mode */
+body.theme-tenet .timeline-inner {
+  height: 280px;
+  align-items: flex-end;
+  padding-bottom: 1.5rem;
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.theme-tenet.timeline-has-stacks .timeline-inner {
+  height: 680px;
+  padding-bottom: 2rem;
+}
+
+body.theme-tenet .game-board {
+  min-height: 550px;
+  transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.theme-tenet.timeline-has-stacks .game-board {
+  min-height: 850px;
+}
+
+/* Timeline Vertical Stacking for Simultaneous Events */
+.timeline-slot {
+  display: flex;
+  flex-direction: column-reverse; /* Stacks new elements growing upward! */
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.2rem;
+  padding-bottom: 1rem;
+}
+
+.timeline-slot .timeline-card-wrapper {
+  animation: pop-in 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+}
+
+/* Vertical drop zones directly on top of stacked cards */
+.vertical-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  animation: pop-in 0.3s ease;
+}
+
+.vertical-drop-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.2);
+  border: 1px dashed var(--primary-color);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.vertical-drop-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+  border-style: solid;
+  transform: scale(1.2);
+  box-shadow: 0 0 15px var(--primary-color);
+}
+
+/* Make horizontal drop zones taller in TENET mode to easily drop between tall vertical stacks */
+body.theme-tenet .drop-zone {
+  height: 200px;
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.theme-tenet.timeline-has-stacks .drop-zone {
+  height: 580px;
+}
+
+/* Stacked simultaneous events in TENET mode get temporal axis flow labels */
+body.theme-tenet .timeline-slot:has(.timeline-card-wrapper + .timeline-card-wrapper)::after {
+  content: '▲ REVERSE ENTROPY (RED FLOW)';
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #e63946; /* Neon Crimson */
+  text-shadow: 0 0 8px rgba(230, 57, 70, 0.6);
+  margin-bottom: 0.5rem;
+  animation: pulse-red 2s infinite alternate;
+}
+
+body.theme-tenet .timeline-slot:has(.timeline-card-wrapper + .timeline-card-wrapper)::before {
+  content: '▼ FORWARD ENTROPY (BLUE FLOW)';
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #00ffff; /* Neon Cyan */
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  margin-top: 0.5rem;
+  animation: pulse-blue 2s infinite alternate;
+}
+
+@keyframes pulse-red {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; text-shadow: 0 0 12px rgba(230, 57, 70, 0.9); }
+}
+
+@keyframes pulse-blue {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; text-shadow: 0 0 12px rgba(0, 255, 255, 0.9); }
+}
+
+
+
