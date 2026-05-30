@@ -426,10 +426,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const slotEl = document.createElement('div');
       slotEl.className = 'timeline-slot';
 
+<<<<<<< HEAD
+      const cardEl = document.createElement('div');
+      cardEl.className = `card timeline-card${card.isMistake ? ' mistake-card' : ''}`;
+      cardEl.innerHTML = `
+        <div>
+          <div class="card-title">${card.title}</div>
+          <div class="card-desc">${card.description}</div>
+        </div>
+        <div class="card-footer">
+          <div class="card-date">${card.displayYear}</div>
+          <div class="card-type-tag">${card.isMistake ? 'Mistake' : 'Timeline'}</div>
+        </div>
+      `;
+=======
       // Render all cards inside this slot (stacked vertically)
       slot.cards.forEach(card => {
         const cardWrapper = document.createElement('div');
         cardWrapper.className = 'timeline-card-wrapper';
+>>>>>>> 8fe6eb2565decc53189a43bb4fbb5529b6c2aa9b
 
         const cardEl = document.createElement('div');
         cardEl.className = 'card timeline-card';
@@ -638,6 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Place the card in its CORRECT location to keep board sorted
       const failedCard = drawnCard;
+      failedCard.isMistake = true;
       placedCards.splice(correctIndex, 0, failedCard);
       drawnCards = drawnCards.filter(c => c.id !== failedCard.id);
       drawnCard = null;

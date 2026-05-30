@@ -664,6 +664,25 @@ button {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
+.timeline-card.mistake-card {
+  border-color: #ef4444 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 15px rgba(239, 68, 68, 0.4) !important;
+}
+
+.timeline-card.mistake-card::before {
+  background: #ef4444 !important;
+}
+
+.timeline-card.mistake-card .card-date {
+  color: #ef4444 !important;
+}
+
+.timeline-card.mistake-card .card-type-tag {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+}
+
 .timeline-card .card-title {
   font-size: 1.05rem;
 }
